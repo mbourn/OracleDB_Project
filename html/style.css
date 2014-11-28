@@ -43,3 +43,20 @@ input:hover {
 td {
   text-align: center;
 }
+
+#coll {
+  border: solid black 1px;
+/*  width: 50%;
+  position: relative;
+  left: -5px;
+*/
+}
+
+#shared_coll {
+  border: solid black 1px;
+/*  width: 38%;
+  position: fixed;
+  left: 480px;
+  top: 271px;
+*/
+}

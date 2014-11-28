@@ -7,13 +7,14 @@
 <body>
 <div id="main">
 <?php
+$_POST = strip_sym($_POST);
 if(!empty($_POST['username']) && !empty($_POST['password'])){
     $username = $_POST['username'];
     $password = $_POST['password'];
 
-    $chk_u_name = oci_parse($conn, "SELECT * FROM users WHERE u_name = '" .$username."'");
+    $chk_u_name = oci_parse($conn, "SELECT * FROM users WHERE u_name = '".$username."'");
     oci_execute($chk_u_name);
-    while ($row = oci_fetch_array($chklogin, OCI_ASSOC+OCI_RETURN_NULLS)){
+    while ($row = oci_fetch_array($chk_u_name, OCI_ASSOC+OCI_RETURN_NULLS)){
       foreach ($row as $item){}}
 
     if( oci_num_rows($chk_u_name) == 1 ){
@@ -28,6 +29,7 @@ if(!empty($_POST['username']) && !empty($_POST['password'])){
       $q_str = "INSERT INTO users(fname, lname, u_name, p_word, age, email, quote) VALUES('".$f_name."', '".$l_name."', '".$username."', '".$password."', '".$age."', '".$email."', '".$quote."')";
       $reg_query = oci_parse($conn, $q_str);
       $success = oci_execute($reg_query);
+      oci_close($conn);
 
       if( $success ){
         echo "<h1>Good news, bro, you're in!</h1>";
@@ -39,8 +41,9 @@ if(!empty($_POST['username']) && !empty($_POST['password'])){
     }
   }else{
 ?>  <h1>Register Your Guns</h1>
-    <p>Tell us about yourself, and we'll tell you if you're bulgy enough to use our databse</p>
-    <img src="arnold.gif" alt='Arnold tossing some fool' style='width:337px;height:200px'>
+  <p>Tell us about yourself, and we'll tell you if you're bulgy enough to use our databse<br>
+     Use only letters and numbers, all special characters will be removed like this guy:</p>
+    <img src="images/arnold.gif" alt='Arnold tossing some fool' style='width:337px;height:200px'>
     <form method='post' action='register.php' name='registerform' id='refisterform'>
     <fieldset>
       <label for='username'>Username:</label><input type='text' name='username' id='username'><br>
