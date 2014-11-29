@@ -36,3 +36,16 @@ CREATE OR REPLACE PROCEDURE PROC_MAKE_TOT_VIEW
 END PROC_MAKE_TOT_VIEW;
 
 
+-- remove all references to the collection whose id is passed as a parameter
+CREATE OR REPLACE PROCEDURE PROC_DEL_COL_REFS 
+(
+  V_C_ID IN VARCHAR2 
+) AS 
+BEGIN
+  DELETE FROM coll_book 
+    WHERE c_id = v_c_id;
+  DELETE FROM coll_cd
+    WHERE c_id = v_c_id;
+  DELETE FROM coll_movie
+    WHERE c_id = v_c_id;
+END PROC_DEL_COL_REFS;

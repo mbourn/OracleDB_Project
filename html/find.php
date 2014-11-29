@@ -61,8 +61,10 @@
           foreach($row as $key => $value ){
             echo '<td>'.$value.'</td>';
           }
-//            echo '<td><button onclick="alert(\'HI\')">HI</button></td>';
-          echo "<td><button onclick='delete_item(".$_POST['table'].", ".$_POST['col'].", ".$_POST['term'].")'>Purge!</button></td>";
+ //         $action = "if(confirm('Confirm Delete?')==true)";
+          $action .= "location.href='delete.php?table=".$_POST['table'];
+          $action .= "&col=id&term=".$row['ID']."';";
+          echo '<td><button onclick="'.$action.'">PURGE!</button></td>';
           echo '</tr><tr>';
         }
         echo '</tr></table>';

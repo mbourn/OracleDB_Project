@@ -6,44 +6,64 @@
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 <body>
+<div id="main">
 <?php
-  if( !empty($_SESSION['LoggedIn']) && !empty($_SESSION['Username'])){
-    render_mmbr_header();
+if( !empty($_SESSION['LoggedIn']) && !empty($_SESSION['Username'])){
+  render_mmbr_header();
+  if( $_GET['action'] == 'add_collection'){
+    create_collection($conn, $_POST['c_name'], $_POST['c_desc'], $_POST['adult']);
+  }elseif( $_GET['delete']){
+    delete_collection($conn, $_GET['delete']);
   }
-var_dump($_SESSION);
-  $sql_c = 'SELECT * FROM collections';
-  $sql_u = 'Select id, u_name from users';
-  $coll_names = oci_parse($conn, $sql_c);
-  $u_names = oci_parse($conn, $sql_u);
-  oci_execute($u_names);
-  oci_execute($coll_names);
-  oci_close($conn);
-//  echo $coll_names;
-
-  echo '<table>';
-  echo '</table>';
-
+  if( $_GET['action'] == 'create'){
+    echo '<h1>Create Collection</h1>';
+    var_dump($_SESSION);
 ?>
-  <div id="main">
+  <table id='create_form_table'>
+    <form action='collections.php?action=add_collection' method='POST'>
+    <tr>
+      <td>Collection Name: </td>
+      <td><input type='text' name='c_name' id='col_name'></td>
+    </tr><tr>
+      <td>Collection Description: </td>
+      <td><input type='text' name='c_desc' id='col_desc'></td>
+    </tr><tr>
+      <td>Not Kid Safe? </td>
+      <td><input type='checkbox' name='adult' id='adult'></td>
+    </tr><tr>
+      <td><input type='submit' name='submit' id='submit'></td>
+    </tr></form>
+  </table>
+
+<?php
+  }else{
+    $sql = 'SELECT * FROM collections WHERE u_id = '.$_SESSION['id'];
+    $stmt = oci_parse($conn, $sql);
+    $success = oci_execute($stmt);
+?>
     <div id="coll">
       <h3>Your Collections</h3>
       <table>
-<?php
-  $get_results = oci_fetch_all($u_names, $rows);
-//var_dump(  $rows);
-  while( $row = oci_fetch_array( $coll_names, OCI_ASSOC+OCI_RETURN_NULLS)){
-var_dump($row);
-//    foreach( $row as $item ){ 
-      echo '<tr><td>'.$row['C_NAME'].'</td><td>'.$row['ID'].'</tr>';
-//    }
-  }
-?>
-      
-      </tr><tr>
-        
-        <td><a href="collections.php?action=create">Make a new Collections</a></td>
+      <?php
+        while( $row = oci_fetch_array( $stmt, OCI_ASSOC+OCI_RETURN_NULLS)){
+          echo '<tr><td>'.$row['C_NAME'].'</td>';
+          echo '<td><a href="collections.php?view='.$row['ID'].'">View</a></td>';
+          echo '<td><a href="edit_collection.php?id='.$row['ID'].'">Edit</a></td>';
+          echo '<td><a href="collections.php?delete='.$row['ID'].'">Delete</a></td>';
+          echo '<td><a href="manage_collections.php?share='.$row['ID'].'">Share</a></td></tr>';
+        }
+      ?>
+        </tr><tr>
+          <td><a href="collections.php?action=create">Make a new Collections</a></td>
+        </tr>
       </table>
     </div>
-  </div>
+<?php
+  }
+}else{
+  echo '<h1>GTFO!!</h1>';
+}
+?>
+</div>
 </body>
 </html>

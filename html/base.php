@@ -50,12 +50,56 @@
     $stmt = oci_parse($conn, $sql);
     $success = oci_execute($stmt);
     if( !$success){
+      oci_commit($conn);
       echo '<h1>Deletion Failed</h1>';
     }else{
+      oci_rollback($conn);
       echo '<h1>Item Deleted</h1>';
     }
   }
 
+  function create_collection($conn, $c_name, $c_desc, $adult){
+    if($adult == 'on'){
+      $adult = 1;
+    }else{
+      $adult = 0;
+    }
+    $sql = "SELECT * FROM collections WHERE c_name = '".$c_name."'";
+    $stmt = oci_parse($conn, $sql);
+    oci_execute($stmt);
+    while( oci_fetch_array($stmt)){
+    }
+    if( !oci_num_rows($stmt)){
+      $sql =  "INSERT INTO collections(u_id, c_name, c_desc, adult)";
+      $sql .= " VALUES(".$_SESSION['id'].", '".$c_name."', '".$c_desc."', ".$adult.")";
+      $stmt = oci_parse($conn, $sql);
+      $success = oci_execute($stmt);
+      if( $success){
+        echo '<h1>Your new collection has been created</h1>';
+        echo '<h3>Now go add stuff to it!</h3>';
+      }else{
+        echo '<h1>The Database Rejected Your Collection Idea.</h1>';
+        echo '<h3>Try Again.</h3>';
+      }
+    }else{
+      echo '<h1>Good name ... but someone already used it.</h1>';
+      echo '<h3>Try Again.</h3>';
+    }
+  }
+
+  function delete_collection($conn, $c_id){
+    $sql = "DELETE FROM collections WHERE id = ".$c_id;
+    echo $sql;
+    var_dump($_GET);
+    $stmt = oci_parse($conn, $sql);
+    $success = oci_execute($stmt);
+    if( $success){
+      echo '<h1>That collection was weak sauce anyway. Deleted!</h1>';
+    }else{
+      echo "<h1>The database wasn't ready to let go.</h1>";
+      echo "<h3>Try Again.</h3>";
+    }
+  }
 
 
 /*  $sql_q = oci_parse($conn, "SELECT * FROM users");

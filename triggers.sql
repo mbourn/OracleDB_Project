@@ -82,3 +82,19 @@ BEGIN
   proc_make_tot_view(v_cid);
   COMMIT;
 END;
+
+
+-- When a collection is deleted, this calls a procedure to first 
+-- remove all references to that collection from the collection
+-- subtables
+CREATE OR REPLACE TRIGGER TRG_RMV_COLL_ITMS 
+BEFORE DELETE ON COLLECTIONS 
+FOR EACH ROW
+DECLARE
+    v_c_id number;
+  PRAGMA AUTONOMOUS_TRANSACTION;
+BEGIN
+    v_c_id := :old.id;
+  proc_del_col_refs(v_c_id);
+  COMMIT;
+END;

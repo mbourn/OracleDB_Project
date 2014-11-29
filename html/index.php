@@ -76,8 +76,8 @@
     $password = $_POST['password'];
     $sql_q = "SELECT * FROM users WHERE u_name = '".$username."' AND p_word = '".$password."'";
     $chklogin = oci_parse($conn, $sql_q);
-    oci_close($conn);
     oci_execute($chklogin);
+    oci_close($conn);
 
     
     while ($row = oci_fetch_array($chklogin, OCI_ASSOC+OCI_RETURN_NULLS)) {
